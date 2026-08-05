@@ -534,17 +534,20 @@
             const syncWhatsApp = () => {
                 if (sameAsMobileCheckbox.checked) {
                     whatsappInput.value = phoneInput.value;
-                    whatsappInput.readOnly = true;
-                    whatsappInput.classList.add('bg-gray-200', 'text-gray-500');
-                } else {
-                    whatsappInput.readOnly = false;
-                    whatsappInput.classList.remove('bg-gray-200', 'text-gray-500');
                 }
             };
 
             sameAsMobileCheckbox.addEventListener('change', syncWhatsApp);
+            
             phoneInput.addEventListener('input', () => {
                 if (sameAsMobileCheckbox.checked) syncWhatsApp();
+            });
+            
+            whatsappInput.addEventListener('input', () => {
+                // If user edits WhatsApp manually, uncheck the box if it differs
+                if (whatsappInput.value !== phoneInput.value) {
+                    sameAsMobileCheckbox.checked = false;
+                }
             });
 
             statusRadios.forEach(radio => {
