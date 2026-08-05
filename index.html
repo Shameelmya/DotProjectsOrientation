@@ -561,15 +561,7 @@
                         return;
                     }
 
-                    // Check duplicate using WhatsApp number
-                    const whatsappQuery = query(collection(db, "registrations"), where("whatsapp", "==", whatsappInput.value));
-                    const whatsappSnap = await getDocs(whatsappQuery);
-                    
-                    if (!whatsappSnap.empty) {
-                        stopLoading();
-                        window.showAlert('Already Registered', `The WhatsApp number ${whatsappInput.value} is already registered for this programme.`);
-                        return;
-                    }
+
 
                     startLoading("Submitting your registration...");
 
