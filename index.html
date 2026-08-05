@@ -882,12 +882,16 @@
                             const alertDate = new Date("2026-08-08T00:00:00");
                             const showAlertBtn = today >= alertDate;
 
-                            const sessionStr = data.sessions && data.sessions.length > 0 ? data.sessions.join(' and ') : 'the program';
+                            const sessionMap = {
+                                'Morning': '*AI Content Creation*',
+                                'Afternoon': '*Vibe Coding*'
+                            };
+                            const sessionStr = data.sessions && data.sessions.length > 0 ? data.sessions.map(s => sessionMap[s] || s).join(' and ') : '*the program*';
 
-                            const msg1 = `Hi, ${data.name}! \u{1FA77}\nHope you are doing well.\nYour registration is successful! \u{1F680} Congrats on taking this initiative.\n\nYou have successfully opted for: ${sessionStr}.\n\nProgram Details:\n\u{1F4C5} Date: 9 August 2026, Sunday\n\u{23F0} Time: 10:00 AM onwards\n\u{1F4CD} Venue: Edarikkode, Kottakkal\n\nSee you there! \u{2728}\n- Team Dot Skill Academy`;
+                            const msg1 = `Hi, *${data.name}*! \u{1FA77}\nHope you are doing well.\nYour registration is successful! \u{1F680} Congrats on taking this initiative.\n\nYou have successfully opted for: ${sessionStr}.\n\n*Program Details:*\n\u{1F4C5} Date: *9 August 2026, Sunday*\n\u{23F0} Time: *10:00 AM onwards*\n\u{1F4CD} Venue: *Edarikkode, Kottakkal*\n\nSee you there! \u{2728}\n- Team Dot Skill Academy`;
                             const msg1Url = `https://wa.me/91${data.whatsapp}?text=${encodeURIComponent(msg1)}`;
 
-                            const msg2 = `\u{1F6A8} *REMINDER* \u{1F6A8}\nHi, ${data.name}! \u{1F680}\nJust a quick reminder that our program is TOMORROW! \u{26A0}\u{FE0F}\u{23F3}\n\n\u{1F4C5} Date: 9 August 2026\n\u{23F0} Time: 10:00 AM\n\u{1F4CD} Venue: Edarikkode, Kottakkal\n\nPlease confirm your attendance.\n\nSee you tomorrow! \u{2728}\n- Team Dot Skill Academy`;
+                            const msg2 = `\u{1F6A8} *REMINDER* \u{1F6A8}\nHi, *${data.name}*! \u{1F680}\nJust a quick reminder that our program is TOMORROW! \u{26A0}\u{FE0F}\u{23F3}\n\n*Program Details:*\n\u{1F4C5} Date: *9 August 2026*\n\u{23F0} Time: *10:00 AM*\n\u{1F4CD} Venue: *Edarikkode, Kottakkal*\n\nPlease confirm your attendance.\n\nSee you tomorrow! \u{2728}\n- Team Dot Skill Academy`;
                             const msg2Url = `https://wa.me/91${data.whatsapp}?text=${encodeURIComponent(msg2)}`;
 
                             return `
