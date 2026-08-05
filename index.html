@@ -45,10 +45,10 @@
             background-color: #fff;
             margin: 0;
             color: currentColor;
-            width: 1.25rem;
-            height: 1.25rem;
+            width: 1rem;
+            height: 1rem;
             border: 1px solid #d1d5db;
-            border-radius: 0.35rem;
+            border-radius: 0.25rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -64,12 +64,14 @@
 
         .ios-checkbox:checked::after {
             content: '';
-            width: 6px;
-            height: 10px;
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            width: 4px;
+            height: 8px;
             border: solid white;
             border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-            margin-bottom: 2px;
+            transform: translate(-50%, -50%) rotate(45deg);
         }
 
         .ios-input {
@@ -243,9 +245,9 @@
                         <input type="tel" id="phone" required placeholder="Mobile Number" pattern="[0-9]{10}" maxlength="10" class="ios-input">
                     </div>
                     
-                    <div class="flex items-center gap-3 px-1">
+                    <div class="flex items-center gap-2 px-1">
                         <input type="checkbox" id="sameAsMobile" class="ios-checkbox">
-                        <label for="sameAsMobile" class="text-sm text-gray-700 cursor-pointer">WhatsApp number is same as Mobile</label>
+                        <label for="sameAsMobile" class="text-xs text-gray-700 cursor-pointer">WhatsApp number is same as Mobile</label>
                     </div>
 
                     <div>
@@ -362,6 +364,36 @@
 
             <!-- Dashboard Data State -->
             <div id="adminDataSection" class="hidden">
+                <!-- Filters and Sort -->
+                <div class="bg-white p-4 rounded-xl shadow-sm border mb-4 flex flex-wrap gap-4 items-end">
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Gender</label>
+                        <select id="filterGender" class="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-theme transition">
+                            <option value="All">All</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Session</label>
+                        <select id="filterSession" class="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-theme transition">
+                            <option value="All">All</option>
+                            <option value="Morning">Morning</option>
+                            <option value="Afternoon">Afternoon</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 min-w-[150px]">
+                        <label class="block text-xs font-semibold text-gray-500 mb-1 uppercase tracking-wider">Sort By</label>
+                        <select id="sortStatus" class="w-full bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-theme transition">
+                            <option value="DateDesc">Date (Newest First)</option>
+                            <option value="DateAsc">Date (Oldest First)</option>
+                            <option value="StatusAsc">Status (A-Z)</option>
+                            <option value="StatusDesc">Status (Z-A)</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -651,39 +683,10 @@
                     allRegistrations.push(doc.data());
                 });
 
-                // Sort by timestamp descending in memory
-                allRegistrations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
                 document.getElementById('tableLoading').classList.add('hidden');
-
-                if (allRegistrations.length === 0) {
-                    document.getElementById('tableEmpty').classList.remove('hidden');
-                    return;
-                }
-
-                const tbody = document.getElementById('registrationsTableBody');
-                allRegistrations.forEach(data => {
-                    const dateObj = new Date(data.timestamp);
-                    const formattedDate = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-gray-50 transition";
-                    tr.innerHTML = `
-                        <td class="p-4 whitespace-nowrap text-gray-500">${formattedDate}</td>
-                        <td class="p-4 font-medium text-gray-900">${data.name}</td>
-                        <td class="p-4">${data.age} / ${data.gender}</td>
-                        <td class="p-4">${data.place}, ${data.district}</td>
-                        <td class="p-4 font-medium">${data.phone}</td>
-                        <td class="p-4">${data.whatsapp}</td>
-                        <td class="p-4">
-                            <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${data.status}</span>
-                        </td>
-                        <td class="p-4">
-                            ${data.sessions.map(s => `<span class="px-2 py-1 bg-theme/10 text-theme rounded text-xs mr-1">${s}</span>`).join('')}
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                
+                setupFilters();
+                applyFiltersAndRender();
 
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -691,6 +694,83 @@
                 document.getElementById('tableEmpty').innerText = "Error loading data. Check console for details. (Ensure Firestore rules are configured)";
                 document.getElementById('tableEmpty').classList.remove('hidden');
             }
+        }
+
+        function setupFilters() {
+            const filterGender = document.getElementById('filterGender');
+            const filterSession = document.getElementById('filterSession');
+            const sortStatus = document.getElementById('sortStatus');
+            
+            // Avoid adding multiple listeners if setupFilters is called again
+            filterGender.removeEventListener('change', applyFiltersAndRender);
+            filterSession.removeEventListener('change', applyFiltersAndRender);
+            sortStatus.removeEventListener('change', applyFiltersAndRender);
+            
+            filterGender.addEventListener('change', applyFiltersAndRender);
+            filterSession.addEventListener('change', applyFiltersAndRender);
+            sortStatus.addEventListener('change', applyFiltersAndRender);
+        }
+
+        function applyFiltersAndRender() {
+            const genderVal = document.getElementById('filterGender').value;
+            const sessionVal = document.getElementById('filterSession').value;
+            const sortVal = document.getElementById('sortStatus').value;
+            
+            let filtered = allRegistrations.filter(data => {
+                let matchGender = (genderVal === 'All' || data.gender === genderVal);
+                let matchSession = (sessionVal === 'All' || (data.sessions && data.sessions.includes(sessionVal)));
+                return matchGender && matchSession;
+            });
+            
+            filtered.sort((a, b) => {
+                if (sortVal === 'DateDesc') {
+                    return new Date(b.timestamp) - new Date(a.timestamp);
+                } else if (sortVal === 'DateAsc') {
+                    return new Date(a.timestamp) - new Date(b.timestamp);
+                } else if (sortVal === 'StatusAsc') {
+                    return (a.status || '').localeCompare(b.status || '');
+                } else if (sortVal === 'StatusDesc') {
+                    return (b.status || '').localeCompare(a.status || '');
+                }
+                return 0;
+            });
+            
+            renderAdminTable(filtered);
+        }
+
+        function renderAdminTable(dataArray) {
+            const tbody = document.getElementById('registrationsTableBody');
+            tbody.innerHTML = '';
+            
+            if (dataArray.length === 0) {
+                document.getElementById('tableEmpty').classList.remove('hidden');
+                return;
+            } else {
+                document.getElementById('tableEmpty').classList.add('hidden');
+            }
+
+            dataArray.forEach(data => {
+                const dateObj = new Date(data.timestamp);
+                const formattedDate = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition";
+                tr.innerHTML = `
+                    <td class="p-4 whitespace-nowrap text-gray-500">${formattedDate}</td>
+                    <td class="p-4 font-medium text-gray-900">${data.name}</td>
+                    <td class="p-4">${data.age} / ${data.gender}</td>
+                    <td class="p-4">${data.place}, ${data.district}</td>
+                    <td class="p-4 font-medium">${data.phone}</td>
+                    <td class="p-4">${data.whatsapp}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${data.status}</span>
+                    </td>
+                    <td class="p-4">
+                        ${(data.sessions || []).map(s => `<span class="px-2 py-1 bg-theme/10 text-theme rounded text-xs mr-1">${s}</span>`).join('')}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
         window.exportToCSV = () => {
