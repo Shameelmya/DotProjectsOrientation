@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dot Skill Academy - Free Orientation Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: '#CE2B5D',
+                        whatsapp: '#25D366', // Lighter WhatsApp Green
+                        iosBg: '#F2F2F7',
+                        iosCard: '#FFFFFF',
+                        iosText: '#000000',
+                        iosSecondaryText: '#8A8A8E',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+                        sora: ['Sora', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'ios': '0 2px 10px rgba(0,0,0,0.05)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: theme('colors.iosBg');
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .ios-checkbox {
+            appearance: none;
+            -webkit-appearance: none;
+            background-color: #fff;
+            margin: 0;
+            color: currentColor;
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.35rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .ios-checkbox:checked {
+            background-color: theme('colors.theme');
+            border-color: theme('colors.theme');
+        }
+
+        .ios-checkbox:checked::after {
+            content: '';
+            width: 6px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            margin-bottom: 2px;
+        }
+
+        .ios-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #f3f4f6;
+            border: 1px solid transparent;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .ios-input:focus {
+            outline: none;
+            border-color: theme('colors.theme');
+            background-color: #ffffff;
+        }
+
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #ffffff;
+            width: 24px;
+            height: 24px;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        .spinner-theme {
+            border: 3px solid rgba(206, 43, 93, 0.2);
+            border-top: 3px solid #CE2B5D;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #otherStatusContainer {
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, margin 0.3s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            margin-top: 0;
+        }
+        #otherStatusContainer.show {
+            max-height: 100px;
+            opacity: 1;
+            margin-top: 0.75rem;
+        }
+
+        /* Hide sections based on view */
+        .view-hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="text-iosText">
+
+    <!-- USER REGISTRATION VIEW -->
+    <div id="registrationView" class="max-w-md mx-auto min-h-screen flex flex-col relative pb-10">
+        
+        <!-- Top Action Bar -->
+        <div class="px-4 pt-4 flex justify-between items-center relative z-40">
+            <!-- Contact Dropdown Wrapper -->
+            <div class="relative">
+                <button id="contactBtn" type="button" class="flex items-center gap-1.5 bg-white shadow-sm border border-gray-200 text-gray-700 py-1.5 px-3 rounded-full text-[11px] uppercase tracking-wide font-bold active:scale-95 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.41-38.83-38.83l20.78-24.34a8.12,8.12,0,0,0,.56-.75,16,16,0,0,0,1.4-15.17l-.06-.13L97.54,33.63A16,16,0,0,0,82,24H56A16,16,0,0,0,40,40,176.2,176.2,0,0,0,216,216a16,16,0,0,0,16-16V174A16,16,0,0,0,222.37,158.46ZM216,200A160.18,160.18,0,0,1,56,40H82.05l21.12,47.11-22.87,26.8c-.46.52-.92,1-1.36,1.6a8,8,0,0,0-.42,8.87c7.92,17.48,25.9,35.45,43.37,43.37a8,8,0,0,0,8.87-.42c.56-.44,1.08-.9,1.6-1.36l26.8-22.87L206,165.17l-.05.11Z"></path></svg>
+                    Contact
+                </button>
+
+                <!-- Contact Menu Dropdown -->
+                <div id="contactMenu" class="hidden absolute top-full left-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 p-3 flex flex-col gap-3 origin-top-left transition-all">
+                    <!-- Number 1 -->
+                    <div class="flex flex-col gap-2">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Support 1</span>
+                        <div class="font-semibold text-gray-800 ml-1 text-sm tracking-wide">7907 115 875</div>
+                        <div class="flex gap-2">
+                            <a href="tel:+917907115875" class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors py-2 rounded-xl text-xs font-bold flex justify-center items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.41-38.83-38.83l20.78-24.34a8.12,8.12,0,0,0,.56-.75,16,16,0,0,0,1.4-15.17l-.06-.13L97.54,33.63A16,16,0,0,0,82,24H56A16,16,0,0,0,40,40,176.2,176.2,0,0,0,216,216a16,16,0,0,0,16-16V174A16,16,0,0,0,222.37,158.46Z"></path></svg> Call</a>
+                            <a href="https://wa.me/917907115875" target="_blank" class="flex-1 bg-whatsapp/10 text-whatsapp hover:bg-whatsapp/20 transition-colors py-2 rounded-xl text-xs font-bold flex justify-center items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.124.553 4.195 1.602 6.012L.15 23.513l5.632-1.477c1.761.968 3.742 1.48 5.787 1.48h.005c6.645 0 12.031-5.386 12.031-12.031S18.676 0 12.031 0zm0 21.523c-1.782 0-3.528-.478-5.056-1.385l-.362-.214-3.754.984 1.002-3.66-.235-.373A9.99 9.99 0 0 1 2.04 12.03c0-5.518 4.492-10.01 10.01-10.01 5.518 0 10.01 4.492 10.01 10.01 0 5.518-4.492 10.01-10.01 10.01zm5.492-7.5c-.301-.151-1.782-.879-2.058-.98-.276-.101-.478-.151-.678.151-.201.301-.779.98-.954 1.181-.176.201-.352.226-.653.075-2.045-.985-3.328-2.197-4.283-3.811-.176-.277.022-.431.171-.581.134-.134.301-.352.451-.527.151-.176.201-.301.301-.502.101-.201.05-.377-.025-.527-.075-.151-.678-1.631-.929-2.234-.244-.588-.493-.508-.678-.517-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.029-1.054 2.51s1.079 2.912 1.23 3.113c.151.201 2.122 3.238 5.14 4.542 1.637.708 2.378.85 3.167.925.803.076 2.502-.857 2.852-1.705.351-.848.351-1.576.251-1.727-.101-.151-.377-.251-.678-.402z"/></svg> WhatsApp</a>
+                        </div>
+                    </div>
+                    <div class="h-px bg-gray-100 w-full"></div>
+                    <!-- Number 2 -->
+                    <div class="flex flex-col gap-2">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider ml-1">Support 2</span>
+                        <div class="font-semibold text-gray-800 ml-1 text-sm tracking-wide">7559 865 389</div>
+                        <div class="flex gap-2">
+                            <a href="tel:+917559865389" class="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors py-2 rounded-xl text-xs font-bold flex justify-center items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 256 256"><path d="M222.37,158.46l-47.11-21.11-.13-.06a16,16,0,0,0-15.17,1.4,8.12,8.12,0,0,0-.75.56L134.87,160c-15.42-7.49-31.34-23.41-38.83-38.83l20.78-24.34a8.12,8.12,0,0,0,.56-.75,16,16,0,0,0,1.4-15.17l-.06-.13L97.54,33.63A16,16,0,0,0,82,24H56A16,16,0,0,0,40,40,176.2,176.2,0,0,0,216,216a16,16,0,0,0,16-16V174A16,16,0,0,0,222.37,158.46Z"></path></svg> Call</a>
+                            <a href="https://wa.me/917559865389" target="_blank" class="flex-1 bg-whatsapp/10 text-whatsapp hover:bg-whatsapp/20 transition-colors py-2 rounded-xl text-xs font-bold flex justify-center items-center gap-1.5"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.124.553 4.195 1.602 6.012L.15 23.513l5.632-1.477c1.761.968 3.742 1.48 5.787 1.48h.005c6.645 0 12.031-5.386 12.031-12.031S18.676 0 12.031 0zm0 21.523c-1.782 0-3.528-.478-5.056-1.385l-.362-.214-3.754.984 1.002-3.66-.235-.373A9.99 9.99 0 0 1 2.04 12.03c0-5.518 4.492-10.01 10.01-10.01 5.518 0 10.01 4.492 10.01 10.01 0 5.518-4.492 10.01-10.01 10.01zm5.492-7.5c-.301-.151-1.782-.879-2.058-.98-.276-.101-.478-.151-.678.151-.201.301-.779.98-.954 1.181-.176.201-.352.226-.653.075-2.045-.985-3.328-2.197-4.283-3.811-.176-.277.022-.431.171-.581.134-.134.301-.352.451-.527.151-.176.201-.301.301-.502.101-.201.05-.377-.025-.527-.075-.151-.678-1.631-.929-2.234-.244-.588-.493-.508-.678-.517-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.029-1.054 2.51s1.079 2.912 1.23 3.113c.151.201 2.122 3.238 5.14 4.542 1.637.708 2.378.85 3.167.925.803.076 2.502-.857 2.852-1.705.351-.848.351-1.576.251-1.727-.101-.151-.377-.251-.678-.402z"/></svg> WhatsApp</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp Join Button (Top Right) -->
+            <a href="https://chat.whatsapp.com/dummy-link-to-be-updated" target="_blank" class="flex items-center gap-1.5 bg-whatsapp text-white py-1.5 px-3 rounded-full text-xs font-bold shadow-sm active:scale-95 transition-all">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.124.553 4.195 1.602 6.012L.15 23.513l5.632-1.477c1.761.968 3.742 1.48 5.787 1.48h.005c6.645 0 12.031-5.386 12.031-12.031S18.676 0 12.031 0zm0 21.523c-1.782 0-3.528-.478-5.056-1.385l-.362-.214-3.754.984 1.002-3.66-.235-.373A9.99 9.99 0 0 1 2.04 12.03c0-5.518 4.492-10.01 10.01-10.01 5.518 0 10.01 4.492 10.01 10.01 0 5.518-4.492 10.01-10.01 10.01zm5.492-7.5c-.301-.151-1.782-.879-2.058-.98-.276-.101-.478-.151-.678.151-.201.301-.779.98-.954 1.181-.176.201-.352.226-.653.075-2.045-.985-3.328-2.197-4.283-3.811-.176-.277.022-.431.171-.581.134-.134.301-.352.451-.527.151-.176.201-.301.301-.502.101-.201.05-.377-.025-.527-.075-.151-.678-1.631-.929-2.234-.244-.588-.493-.508-.678-.517-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.029-1.054 2.51s1.079 2.912 1.23 3.113c.151.201 2.122 3.238 5.14 4.542 1.637.708 2.378.85 3.167.925.803.076 2.502-.857 2.852-1.705.351-.848.351-1.576.251-1.727-.101-.151-.377-.251-.678-.402z"/>
+                </svg>
+                Join Group
+            </a>
+        </div>
+
+        <header class="pt-2 pb-6 px-6 text-center flex flex-col items-center">
+            <div class="w-24 h-24 rounded-full overflow-hidden mb-4 bg-theme flex items-center justify-center">
+                <img src="logo.png" onerror="this.src='image_424226.jpg'" alt="Dot Skill Academy Logo" class="w-full h-full object-cover">
+            </div>
+            
+            <h1 class="text-[22px] font-bold mb-1 tracking-tight font-sora">Free <span class="text-theme">Orientation</span> Session</h1>
+            <h2 class="text-lg font-medium text-gray-700 mb-2">Dot Skill Academy</h2>
+            
+            <!-- Date and Location Badge -->
+            <div class="flex flex-col items-center justify-center gap-1.5 text-[13px] bg-gray-100/80 px-4 py-2.5 rounded-xl mt-2 border border-gray-200/50 w-full max-w-[280px] mx-auto shadow-sm">
+                <!-- Date Row -->
+                <div class="flex items-center justify-center gap-1.5 text-theme w-full font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M208,32H184V24a8,8,0,0,0-16,0v8H88V24a8,8,0,0,0-16,0v8H48A16,16,0,0,0,32,48V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V48A16,16,0,0,0,208,32ZM72,48v8a8,8,0,0,0,16,0V48h80v8a8,8,0,0,0,16,0V48h24V80H48V48ZM208,208H48V96H208V208Z"></path></svg>
+                    <span>9 August 2026, Sunday</span>
+                </div>
+                <!-- Divider -->
+                <div class="h-px w-3/4 bg-gray-200 rounded-full"></div>
+                <!-- Location Row -->
+                <div class="flex items-center justify-center gap-1.5 text-gray-700 w-full font-bold">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="text-gray-500" fill="currentColor" viewBox="0 0 256 256"><path d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206.11c-17.58-12.9-72-54.62-72-134.11a72,72,0,0,1,144,0C200,167.49,145.58,209.21,128,222.11Z"></path></svg>
+                    <span>Edarikkode, <span class="text-theme">Kottakkal</span></span>
+                </div>
+            </div>
+        </header>
+
+        <main class="px-4">
+            <form id="registrationForm" class="space-y-4">
+                <div class="bg-iosCard p-5 rounded-2xl shadow-ios space-y-4">
+                    <h3 class="text-lg font-semibold border-b pb-2 mb-3">Personal Details</h3>
+                    
+                    <input type="text" id="name" required placeholder="Full Name" class="ios-input">
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="age" required placeholder="Age" min="10" max="100" class="ios-input">
+                        <select id="gender" required class="ios-input appearance-none bg-no-repeat bg-right" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%238A8A8E\' viewBox=\'0 0 256 256\'><path d=\'M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z\'></path></svg>'); background-position: right 0.75rem center;">
+                            <option value="" disabled selected>Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <input type="text" id="place" required placeholder="Place" class="ios-input">
+                        <select id="district" required class="ios-input appearance-none bg-no-repeat bg-right" style="background-image: url('data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'16\' height=\'16\' fill=\'%238A8A8E\' viewBox=\'0 0 256 256\'><path d=\'M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z\'></path></svg>'); background-position: right 0.75rem center;">
+                            <option value="Thiruvananthapuram">Thiruvananthapuram</option>
+                            <option value="Kollam">Kollam</option>
+                            <option value="Pathanamthitta">Pathanamthitta</option>
+                            <option value="Alappuzha">Alappuzha</option>
+                            <option value="Kottayam">Kottayam</option>
+                            <option value="Idukki">Idukki</option>
+                            <option value="Ernakulam">Ernakulam</option>
+                            <option value="Thrissur">Thrissur</option>
+                            <option value="Palakkad">Palakkad</option>
+                            <option value="Malappuram" selected>Malappuram</option>
+                            <option value="Kozhikode">Kozhikode</option>
+                            <option value="Wayanad">Wayanad</option>
+                            <option value="Kannur">Kannur</option>
+                            <option value="Kasaragod">Kasaragod</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="bg-iosCard p-5 rounded-2xl shadow-ios space-y-4">
+                    <h3 class="text-lg font-semibold border-b pb-2 mb-3">Contact Information</h3>
+                    
+                    <div>
+                        <input type="tel" id="phone" required placeholder="Mobile Number" pattern="[0-9]{10}" maxlength="10" class="ios-input">
+                    </div>
+                    
+                    <div class="flex items-center gap-3 px-1">
+                        <input type="checkbox" id="sameAsMobile" class="ios-checkbox">
+                        <label for="sameAsMobile" class="text-sm text-gray-700 cursor-pointer">WhatsApp number is same as Mobile</label>
+                    </div>
+
+                    <div>
+                        <input type="tel" id="whatsapp" required placeholder="WhatsApp Number" pattern="[0-9]{10}" maxlength="10" class="ios-input">
+                    </div>
+                </div>
+
+                <div class="bg-iosCard p-5 rounded-2xl shadow-ios space-y-4">
+                    <h3 class="text-lg font-semibold border-b pb-2 mb-3">Current Status</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-transparent has-[:checked]:border-theme has-[:checked]:bg-theme/5 cursor-pointer transition-colors">
+                            <input type="radio" name="status" value="Student" required class="mr-2 text-theme focus:ring-theme">
+                            <span class="text-sm font-medium">Student</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-transparent has-[:checked]:border-theme has-[:checked]:bg-theme/5 cursor-pointer transition-colors">
+                            <input type="radio" name="status" value="Working" class="mr-2 text-theme focus:ring-theme">
+                            <span class="text-sm font-medium">Working</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-transparent has-[:checked]:border-theme has-[:checked]:bg-theme/5 cursor-pointer transition-colors">
+                            <input type="radio" name="status" value="Freelancer" class="mr-2 text-theme focus:ring-theme">
+                            <span class="text-sm font-medium">Freelancer</span>
+                        </label>
+                        <label class="flex items-center p-3 bg-gray-50 rounded-xl border border-transparent has-[:checked]:border-theme has-[:checked]:bg-theme/5 cursor-pointer transition-colors">
+                            <input type="radio" name="status" value="Other" id="statusOther" class="mr-2 text-theme focus:ring-theme">
+                            <span class="text-sm font-medium">Other</span>
+                        </label>
+                    </div>
+                    
+                    <div id="otherStatusContainer">
+                        <input type="text" id="otherStatusInput" placeholder="Please specify your status" class="ios-input">
+                    </div>
+                </div>
+
+                <div class="bg-iosCard p-5 rounded-2xl shadow-ios space-y-4">
+                    <h3 class="text-lg font-semibold border-b pb-2 mb-1">Select Sessions</h3>
+                    <p class="text-xs text-iosSecondaryText mb-3">You can attend one or both sessions.</p>
+                    
+                    <label class="block relative p-4 bg-gray-50 rounded-xl border-2 border-transparent has-[:checked]:border-theme has-[:checked]:bg-theme/5 cursor-pointer transition-all">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1">
+                                <input type="checkbox" name="sessions" value="Morning" class="ios-checkbox session-checkbox">
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-theme mb-1">10:00 AM - 11:30 AM</div>
+                                <div class="font-semibold text-[15px] mb-1">AI Content Creation</div>
+                                <p class="text-xs text-gray-500 leading-snug">AI Video Production, Story creation, Designing, Sound Designing, and all tools.</p>
+                            </div>
+                        </div>
+                    </label>
+
+                    <label class="block relative p-4 bg-gray-50 rounded-xl border-2 border-transparent has-[:checked]:border-theme has-[:checked]:bg-theme/5 cursor-pointer transition-all">
+                        <div class="flex items-start gap-3">
+                            <div class="mt-1">
+                                <input type="checkbox" name="sessions" value="Afternoon" class="ios-checkbox session-checkbox">
+                            </div>
+                            <div>
+                                <div class="text-sm font-bold text-theme mb-1">3:00 PM - 4:30 PM</div>
+                                <div class="font-semibold text-[15px] mb-1">Vibe Coding</div>
+                                <p class="text-xs text-gray-500 leading-snug">Design Websites, Apps using AI, No coding required, Idea structuring, Backend architecting.</p>
+                            </div>
+                        </div>
+                    </label>
+                    <div id="sessionError" class="text-red-500 text-xs hidden pl-1">Please select at least one session.</div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-theme text-white py-4 rounded-xl font-bold text-[17px] shadow-lg shadow-theme/30 active:scale-[0.98] transition-transform flex items-center justify-center gap-2 mt-4">
+                    <span>Submit Registration</span>
+                </button>
+            </form>
+            
+            <div class="flex justify-center mt-6">
+                <a href="#admin" class="text-gray-300 hover:text-gray-400 transition-colors opacity-50" title="Admin Login">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80ZM96,56a32,32,0,0,1,64,0V80H96ZM208,208H48V96H208V208Zm-64-52a16,16,0,1,1-16-16A16,16,0,0,1,144,156Z"></path></svg>
+                </a>
+            </div>
+        </main>
+    </div>
+
+    <!-- ADMIN PANEL VIEW (Hidden by default) -->
+    <div id="adminView" class="w-full min-h-screen bg-gray-100 view-hidden">
+        <header class="bg-white shadow-sm border-b px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full overflow-hidden bg-theme flex items-center justify-center">
+                    <img src="logo.png" onerror="this.src='image_424226.jpg'" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold font-sora text-gray-800">Admin Dashboard</h1>
+                    <p class="text-xs text-gray-500">Dot Skill Academy Registrations</p>
+                </div>
+            </div>
+            
+            <div id="adminControls" class="hidden flex gap-3">
+                <button onclick="exportToCSV()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256"><path d="M224,152a8,8,0,0,1-8,8H192v16a8,8,0,0,1-16,0V160H160a8,8,0,0,1,0-16h16V128a8,8,0,0,1,16,0v16h24A8,8,0,0,1,224,152ZM128,32H72A16,16,0,0,0,56,48V208a16,16,0,0,0,16,16h96a16,16,0,0,0,16-16V112a8,8,0,0,0-2.34-5.66l-48-48A8,8,0,0,0,128,32Zm0,16,36.69,36.69L160,88H128ZM72,208V48h40V96a8,8,0,0,0,8,8h48v96H72Z"></path></svg>
+                    Export CSV
+                </button>
+                <button onclick="adminLogout()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg text-sm font-medium transition">
+                    Logout
+                </button>
+            </div>
+        </header>
+
+        <main class="p-6 max-w-7xl mx-auto">
+            <!-- Login State -->
+            <div id="adminLoginSection" class="max-w-sm mx-auto bg-white p-8 rounded-2xl shadow-sm text-center mt-12">
+                <h2 class="text-xl font-bold mb-2">Admin Access Only</h2>
+                <p class="text-gray-500 text-sm mb-6">Please log in to view registrations.</p>
+                <button onclick="adminLogin()" class="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-700 hover:bg-gray-50 transition shadow-sm font-medium">
+                    <svg viewBox="0 0 24 24" width="20" height="20" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                    Sign in with Google
+                </button>
+                <p id="loginError" class="text-red-500 text-sm mt-4 hidden"></p>
+            </div>
+
+            <!-- Dashboard Data State -->
+            <div id="adminDataSection" class="hidden">
+                <div class="bg-white rounded-xl shadow-sm border overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 text-gray-600 text-sm border-b">
+                                    <th class="p-4 font-semibold">Date/Time</th>
+                                    <th class="p-4 font-semibold">Name</th>
+                                    <th class="p-4 font-semibold">Age/Gender</th>
+                                    <th class="p-4 font-semibold">Location</th>
+                                    <th class="p-4 font-semibold">Mobile</th>
+                                    <th class="p-4 font-semibold">WhatsApp</th>
+                                    <th class="p-4 font-semibold">Status</th>
+                                    <th class="p-4 font-semibold">Sessions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="registrationsTableBody" class="text-sm divide-y">
+                                <!-- Data will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="tableLoading" class="p-10 flex justify-center hidden">
+                        <div class="spinner spinner-theme"></div>
+                    </div>
+                    <div id="tableEmpty" class="p-10 text-center text-gray-500 hidden">
+                        No registrations found.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Overlay for Registration -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white/10 p-6 rounded-2xl flex flex-col items-center backdrop-blur-md">
+            <div class="spinner mb-4"></div>
+            <p class="text-white font-medium text-center px-4" id="loadingText">Registering...<br>Please wait</p>
+        </div>
+    </div>
+
+    <!-- Custom Alert Modal (For Duplication Warning & Errors) -->
+    <div id="alertModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="alertBox">
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 rounded-full bg-red-100 text-red-500 flex items-center justify-center mx-auto mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm-8-80V80a8,8,0,0,1,16,0v56a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,172Z"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold mb-2 text-gray-900" id="alertTitle">Attention</h3>
+                <p class="text-gray-500 text-sm mb-6" id="alertMessage">Message goes here.</p>
+                <button onclick="closeAlert()" class="w-full py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 font-bold rounded-xl transition-colors">
+                    Okay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Your provided Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAHfWO5Z-2kL4K3cucXlPc-TUbj2T_75lo",
+            authDomain: "dot-projects-orientation.firebaseapp.com",
+            projectId: "dot-projects-orientation",
+            storageBucket: "dot-projects-orientation.firebasestorage.app",
+            messagingSenderId: "98676367636",
+            appId: "1:98676367636:web:d3846de44a2402f28a2201"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        let allRegistrations = []; // To store data for CSV
+
+        // Handle Contact Menu Toggle
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactBtn = document.getElementById('contactBtn');
+            const contactMenu = document.getElementById('contactMenu');
+
+            if (contactBtn && contactMenu) {
+                // Toggle menu on button click
+                contactBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    contactMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!contactMenu.contains(e.target) && !contactBtn.contains(e.target)) {
+                        contactMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // ----- ROUTING LOGIC -----
+        const checkRoute = () => {
+            const urlStr = window.location.href.toLowerCase();
+            if (urlStr.includes('/admin') || urlStr.includes('?admin') || urlStr.includes('#admin')) {
+                document.getElementById('registrationView').classList.add('view-hidden');
+                document.getElementById('adminView').classList.remove('view-hidden');
+                setupAdminEnvironment();
+            } else {
+                document.getElementById('adminView').classList.add('view-hidden');
+                document.getElementById('registrationView').classList.remove('view-hidden');
+                setupRegistrationEnvironment();
+            }
+        };
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', checkRoute);
+        window.addEventListener('hashchange', checkRoute);
+
+        function setupRegistrationEnvironment() {
+            const form = document.getElementById('registrationForm');
+            if (!form) return; // Safety check to prevent errors if elements aren't loaded
+
+            const phoneInput = document.getElementById('phone');
+            const whatsappInput = document.getElementById('whatsapp');
+            const sameAsMobileCheckbox = document.getElementById('sameAsMobile');
+            
+            const statusRadios = document.getElementsByName('status');
+            const otherStatusContainer = document.getElementById('otherStatusContainer');
+            const otherStatusInput = document.getElementById('otherStatusInput');
+            
+            const sessionCheckboxes = document.querySelectorAll('.session-checkbox');
+            const sessionError = document.getElementById('sessionError');
+            
+            // Avoid re-attaching multiple event listeners if called multiple times
+            if (form.dataset.initialized) return;
+            form.dataset.initialized = "true";
+
+            const syncWhatsApp = () => {
+                if (sameAsMobileCheckbox.checked) {
+                    whatsappInput.value = phoneInput.value;
+                    whatsappInput.readOnly = true;
+                    whatsappInput.classList.add('bg-gray-200', 'text-gray-500');
+                } else {
+                    whatsappInput.readOnly = false;
+                    whatsappInput.classList.remove('bg-gray-200', 'text-gray-500');
+                }
+            };
+
+            sameAsMobileCheckbox.addEventListener('change', syncWhatsApp);
+            phoneInput.addEventListener('input', () => {
+                if (sameAsMobileCheckbox.checked) syncWhatsApp();
+            });
+
+            statusRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'Other') {
+                        otherStatusContainer.classList.add('show');
+                        otherStatusInput.required = true;
+                        otherStatusInput.focus();
+                    } else {
+                        otherStatusContainer.classList.remove('show');
+                        otherStatusInput.required = false;
+                        otherStatusInput.value = '';
+                    }
+                });
+            });
+
+            sessionCheckboxes.forEach(cb => {
+                cb.addEventListener('change', () => {
+                    sessionError.classList.add('hidden');
+                });
+            });
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                let isSessionSelected = false;
+                sessionCheckboxes.forEach(cb => {
+                    if (cb.checked) isSessionSelected = true;
+                });
+
+                if (!isSessionSelected) {
+                    sessionError.classList.remove('hidden');
+                    sessionError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    return;
+                }
+
+                const phoneNumber = phoneInput.value;
+                startLoading("Checking registration...");
+
+                try {
+                    // Check duplicate using phone number as document ID
+                    const docRef = doc(db, "registrations", phoneNumber);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        stopLoading();
+                        window.showAlert('Already Registered', `The mobile number ${phoneNumber} is already registered for this programme.`);
+                        return;
+                    }
+
+                    startLoading("Submitting your registration...");
+
+                    const statusVal = document.querySelector('input[name="status"]:checked').value;
+                    const finalStatus = statusVal === 'Other' ? `Other: ${otherStatusInput.value}` : statusVal;
+
+                    const formData = {
+                        name: document.getElementById('name').value,
+                        age: document.getElementById('age').value,
+                        gender: document.getElementById('gender').value,
+                        place: document.getElementById('place').value,
+                        district: document.getElementById('district').value,
+                        phone: phoneNumber,
+                        whatsapp: whatsappInput.value,
+                        status: finalStatus,
+                        sessions: Array.from(document.querySelectorAll('.session-checkbox:checked')).map(cb => cb.value),
+                        timestamp: new Date().toISOString()
+                    };
+
+                    await setDoc(docRef, formData);
+
+                    document.getElementById('loadingText').innerHTML = "Registration Successful!<br>Redirecting to WhatsApp group...";
+                    
+                    setTimeout(() => {
+                        window.location.href = "https://chat.whatsapp.com/dummy-link-to-be-updated";
+                        setTimeout(stopLoading, 500); 
+                    }, 1500);
+
+                } catch (error) {
+                    console.error("Error submitting document: ", error);
+                    stopLoading();
+                    window.showAlert('Connection Error', 'Could not process registration right now. Please check your internet and try again.');
+                }
+            });
+        }
+
+        function setupAdminEnvironment() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    if (user.email === 'dotprojectsofficial@gmail.com') {
+                        // Correct Admin logged in
+                        document.getElementById('adminLoginSection').classList.add('hidden');
+                        document.getElementById('adminDataSection').classList.remove('hidden');
+                        document.getElementById('adminControls').classList.remove('hidden');
+                        fetchAdminData();
+                    } else {
+                        // Wrong email
+                        signOut(auth).then(() => {
+                            document.getElementById('loginError').innerText = "Access denied. Only dotprojectsofficial@gmail.com is allowed.";
+                            document.getElementById('loginError').classList.remove('hidden');
+                        });
+                    }
+                } else {
+                    // Not logged in
+                    document.getElementById('adminLoginSection').classList.remove('hidden');
+                    document.getElementById('adminDataSection').classList.add('hidden');
+                    document.getElementById('adminControls').classList.add('hidden');
+                }
+            });
+        }
+
+        window.adminLogin = async () => {
+            document.getElementById('loginError').classList.add('hidden');
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loginError').innerText = "Login failed: " + error.message;
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        };
+
+        window.adminLogout = () => {
+            signOut(auth);
+        };
+
+        async function fetchAdminData() {
+            document.getElementById('tableLoading').classList.remove('hidden');
+            document.getElementById('tableEmpty').classList.add('hidden');
+            document.getElementById('registrationsTableBody').innerHTML = '';
+            
+            try {
+                // Fetching all documents directly to adhere to complex query rules
+                const q = query(collection(db, "registrations"));
+                const querySnapshot = await getDocs(q);
+                
+                allRegistrations = [];
+                querySnapshot.forEach((doc) => {
+                    allRegistrations.push(doc.data());
+                });
+
+                // Sort by timestamp descending in memory
+                allRegistrations.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                document.getElementById('tableLoading').classList.add('hidden');
+
+                if (allRegistrations.length === 0) {
+                    document.getElementById('tableEmpty').classList.remove('hidden');
+                    return;
+                }
+
+                const tbody = document.getElementById('registrationsTableBody');
+                allRegistrations.forEach(data => {
+                    const dateObj = new Date(data.timestamp);
+                    const formattedDate = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-gray-50 transition";
+                    tr.innerHTML = `
+                        <td class="p-4 whitespace-nowrap text-gray-500">${formattedDate}</td>
+                        <td class="p-4 font-medium text-gray-900">${data.name}</td>
+                        <td class="p-4">${data.age} / ${data.gender}</td>
+                        <td class="p-4">${data.place}, ${data.district}</td>
+                        <td class="p-4 font-medium">${data.phone}</td>
+                        <td class="p-4">${data.whatsapp}</td>
+                        <td class="p-4">
+                            <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs">${data.status}</span>
+                        </td>
+                        <td class="p-4">
+                            ${data.sessions.map(s => `<span class="px-2 py-1 bg-theme/10 text-theme rounded text-xs mr-1">${s}</span>`).join('')}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                document.getElementById('tableLoading').classList.add('hidden');
+                document.getElementById('tableEmpty').innerText = "Error loading data. Check console for details. (Ensure Firestore rules are configured)";
+                document.getElementById('tableEmpty').classList.remove('hidden');
+            }
+        }
+
+        window.exportToCSV = () => {
+            if (allRegistrations.length === 0) {
+                alert("No data to export.");
+                return;
+            }
+
+            const headers = ["Timestamp", "Name", "Age", "Gender", "Place", "District", "Phone", "WhatsApp", "Status", "Sessions"];
+            const csvRows = [];
+            csvRows.push(headers.join(','));
+
+            allRegistrations.forEach(row => {
+                const values = [
+                    new Date(row.timestamp).toLocaleString().replace(/,/g, ''),
+                    `"${row.name}"`,
+                    row.age,
+                    row.gender,
+                    `"${row.place}"`,
+                    row.district,
+                    row.phone,
+                    row.whatsapp,
+                    `"${row.status}"`,
+                    `"${row.sessions.join(' & ')}"`
+                ];
+                csvRows.push(values.join(','));
+            });
+
+            const csvString = csvRows.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `DotSkill_Registrations_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        };
+
+        window.showAlert = (title, message) => {
+            const modal = document.getElementById('alertModal');
+            const box = document.getElementById('alertBox');
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            void modal.offsetWidth; // Reflow
+            
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+            box.classList.add('scale-100');
+        };
+
+        window.closeAlert = () => {
+            const modal = document.getElementById('alertModal');
+            const box = document.getElementById('alertBox');
+            
+            modal.classList.add('opacity-0');
+            box.classList.remove('scale-100');
+            box.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+
+        window.startLoading = (text = "Loading...") => {
+            const overlay = document.getElementById('loadingOverlay');
+            document.getElementById('loadingText').innerHTML = text;
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            
+            void overlay.offsetWidth;
+            overlay.classList.remove('opacity-0');
+        };
+
+        window.stopLoading = () => {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.add('opacity-0');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }, 300);
+        };
+    </script>
+</body>
+</html>
