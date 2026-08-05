@@ -417,7 +417,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, orderBy, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, orderBy, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Your provided Firebase config
         const firebaseConfig = {
@@ -558,6 +558,16 @@
                     if (docSnap.exists()) {
                         stopLoading();
                         window.showAlert('Already Registered', `The mobile number ${phoneNumber} is already registered for this programme.`);
+                        return;
+                    }
+
+                    // Check duplicate using WhatsApp number
+                    const whatsappQuery = query(collection(db, "registrations"), where("whatsapp", "==", whatsappInput.value));
+                    const whatsappSnap = await getDocs(whatsappQuery);
+                    
+                    if (!whatsappSnap.empty) {
+                        stopLoading();
+                        window.showAlert('Already Registered', `The WhatsApp number ${whatsappInput.value} is already registered for this programme.`);
                         return;
                     }
 
