@@ -372,6 +372,7 @@
                                     <th class="p-4 font-semibold">WhatsApp</th>
                                     <th class="p-4 font-semibold">Status</th>
                                     <th class="p-4 font-semibold">Sessions</th>
+                                    <th class="p-4 font-semibold">Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="registrationsTableBody" class="text-sm divide-y">
@@ -398,6 +399,49 @@
         </div>
     </div>
 
+    <!-- Edit Registration Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl transform scale-95 transition-transform duration-300 p-6">
+            <h3 class="text-xl font-bold mb-4 text-gray-900 border-b pb-2">Edit Registration</h3>
+            <form id="editForm" class="space-y-4 text-left">
+                <input type="hidden" id="editPhone">
+                <div><label class="text-xs text-gray-500 font-semibold">Name</label><input type="text" id="editName" class="ios-input !py-2 !px-3" required></div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-xs text-gray-500 font-semibold">Age</label><input type="number" id="editAge" class="ios-input !py-2 !px-3" required></div>
+                    <div>
+                        <label class="text-xs text-gray-500 font-semibold">Gender</label>
+                        <select id="editGender" class="ios-input !py-2 !px-3 appearance-none" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-xs text-gray-500 font-semibold">Place</label><input type="text" id="editPlace" class="ios-input !py-2 !px-3" required></div>
+                    <div><label class="text-xs text-gray-500 font-semibold">District</label><input type="text" id="editDistrict" class="ios-input !py-2 !px-3" required></div>
+                </div>
+                <div><label class="text-xs text-gray-500 font-semibold">WhatsApp</label><input type="text" id="editWhatsapp" class="ios-input !py-2 !px-3" required></div>
+                <div>
+                    <label class="text-xs text-gray-500 font-semibold">Status</label>
+                    <input type="text" id="editStatus" class="ios-input !py-2 !px-3" required>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500 font-semibold block mb-1">Sessions</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" id="editSessionMorning" value="Morning" class="w-4 h-4" style="accent-color: #CE2B5D;"> Morning</label>
+                        <label class="flex items-center gap-1 text-sm"><input type="checkbox" id="editSessionAfternoon" value="Afternoon" class="w-4 h-4" style="accent-color: #CE2B5D;"> Afternoon</label>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end gap-2 mt-6 pt-4 border-t">
+                    <button type="button" onclick="closeEditModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-semibold hover:bg-gray-200">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-theme text-white rounded-lg font-semibold hover:opacity-90">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Custom Alert Modal (For Duplication Warning & Errors) -->
     <div id="alertModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl transform scale-95 transition-transform duration-300" id="alertBox">
@@ -417,7 +461,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, orderBy, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, collection, getDocs, orderBy, query, where, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Your provided Firebase config
         const firebaseConfig = {
@@ -456,6 +500,95 @@
                 });
             }
         });
+
+        // ----- EDIT & DELETE LOGIC -----
+        window.openEditModal = (phoneId) => {
+            const data = allRegistrations.find(r => r.phone === phoneId);
+            if (!data) return;
+            
+            document.getElementById('editPhone').value = data.phone;
+            document.getElementById('editName').value = data.name;
+            document.getElementById('editAge').value = data.age;
+            document.getElementById('editGender').value = data.gender;
+            document.getElementById('editPlace').value = data.place;
+            document.getElementById('editDistrict').value = data.district;
+            document.getElementById('editWhatsapp').value = data.whatsapp;
+            document.getElementById('editStatus').value = data.status;
+            
+            document.getElementById('editSessionMorning').checked = data.sessions && data.sessions.includes('Morning');
+            document.getElementById('editSessionAfternoon').checked = data.sessions && data.sessions.includes('Afternoon');
+            
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+            }, 10);
+        };
+
+        window.closeEditModal = () => {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        };
+
+        document.getElementById('editForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phoneId = document.getElementById('editPhone').value;
+            
+            const sessions = [];
+            if (document.getElementById('editSessionMorning').checked) sessions.push('Morning');
+            if (document.getElementById('editSessionAfternoon').checked) sessions.push('Afternoon');
+            
+            const newData = {
+                name: document.getElementById('editName').value,
+                age: document.getElementById('editAge').value,
+                gender: document.getElementById('editGender').value,
+                place: document.getElementById('editPlace').value,
+                district: document.getElementById('editDistrict').value,
+                whatsapp: document.getElementById('editWhatsapp').value,
+                status: document.getElementById('editStatus').value,
+                sessions: sessions
+            };
+            
+            try {
+                const docRef = doc(db, "registrations", phoneId);
+                await updateDoc(docRef, newData);
+                
+                const idx = allRegistrations.findIndex(r => r.phone === phoneId);
+                if(idx !== -1) {
+                    allRegistrations[idx] = { ...allRegistrations[idx], ...newData };
+                }
+                
+                closeEditModal();
+                applyFiltersAndRender();
+                window.showAlert('Success', 'Registration updated successfully!');
+            } catch (err) {
+                console.error("Error updating", err);
+                window.showAlert('Database Error', err.message || 'Failed to update registration.');
+            }
+        });
+
+        window.deleteRegistration = async (phoneId) => {
+            if(confirm(`Are you sure you want to completely delete the registration for ${phoneId}? This action cannot be undone.`)) {
+                try {
+                    const docRef = doc(db, "registrations", phoneId);
+                    await deleteDoc(docRef);
+                    
+                    allRegistrations = allRegistrations.filter(r => r.phone !== phoneId);
+                    applyFiltersAndRender();
+                    window.showAlert('Success', 'Registration deleted successfully!');
+                } catch (err) {
+                    console.error("Error deleting", err);
+                    window.showAlert('Database Error', err.message || 'Failed to delete registration.');
+                }
+            }
+        };
 
         // ----- ROUTING LOGIC -----
         const checkRoute = () => {
@@ -610,7 +743,7 @@
                     } else {
                         // Wrong email
                         signOut(auth).then(() => {
-                            document.getElementById('loginError').innerText = "Access denied. Only dotprojectsofficial@gmail.com is allowed.";
+                            document.getElementById('loginError').innerText = "Access denied.";
                             document.getElementById('loginError').classList.remove('hidden');
                         });
                     }
@@ -737,6 +870,32 @@
                     </td>
                     <td class="p-4">
                         ${(data.sessions || []).map(s => `<span class="px-2 py-1 bg-theme/10 text-theme rounded text-xs mr-1">${s}</span>`).join('')}
+                    </td>
+                    <td class="p-4 flex flex-wrap gap-2 min-w-[200px]">
+                        <button onclick="openEditModal('${data.phone}')" class="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200 transition">Edit</button>
+                        <button onclick="deleteRegistration('${data.phone}')" class="px-2 py-1 bg-red-100 text-red-700 rounded text-xs hover:bg-red-200 transition">Delete</button>
+                        
+                        ${ (() => {
+                            const today = new Date();
+                            const alertDate = new Date("2026-08-08T00:00:00");
+                            const showAlertBtn = today >= alertDate;
+
+                            const sessionStr = data.sessions && data.sessions.length > 0 ? data.sessions.join(' and ') : 'the program';
+
+                            const msg1 = `Hi, ${data.name}! 🩷\nHope you are doing well.\nYour registration is successful! 🚀 Congrats on taking this initiative.\n\nYou have successfully opted for: ${sessionStr}.\n\nProgram Details:\n📅 Date: 9 August 2026, Sunday\n⏰ Time: 10:00 AM onwards\n📍 Venue: Edarikkode, Kottakkal\n\nSee you there! ✨\n- Team Dot Skill Academy`;
+                            const msg1Url = `https://wa.me/91${data.whatsapp}?text=${encodeURIComponent(msg1)}`;
+
+                            const msg2 = `🚨 *REMINDER* 🚨\nHi, ${data.name}! 🚀\nJust a quick reminder that our program is TOMORROW! ⚠️⏳\n\n📅 Date: 9 August 2026\n⏰ Time: 10:00 AM\n📍 Venue: Edarikkode, Kottakkal\n\nPlease confirm your attendance.\n\nSee you tomorrow! ✨\n- Team Dot Skill Academy`;
+                            const msg2Url = `https://wa.me/91${data.whatsapp}?text=${encodeURIComponent(msg2)}`;
+
+                            return `
+                                <a href="${msg1Url}" target="_blank" class="px-2 py-1 bg-whatsapp text-white rounded text-xs hover:opacity-90 transition flex items-center gap-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 0C5.385 0 0 5.385 0 12.031c0 2.124.553 4.195 1.602 6.012L.15 23.513l5.632-1.477c1.761.968 3.742 1.48 5.787 1.48h.005c6.645 0 12.031-5.386 12.031-12.031S18.676 0 12.031 0zm0 21.523c-1.782 0-3.528-.478-5.056-1.385l-.362-.214-3.754.984 1.002-3.66-.235-.373A9.99 9.99 0 0 1 2.04 12.03c0-5.518 4.492-10.01 10.01-10.01 5.518 0 10.01 4.492 10.01 10.01 0 5.518-4.492 10.01-10.01 10.01zm5.492-7.5c-.301-.151-1.782-.879-2.058-.98-.276-.101-.478-.151-.678.151-.201.301-.779.98-.954 1.181-.176.201-.352.226-.653.075-2.045-.985-3.328-2.197-4.283-3.811-.176-.277.022-.431.171-.581.134-.134.301-.352.451-.527.151-.176.201-.301.301-.502.101-.201.05-.377-.025-.527-.075-.151-.678-1.631-.929-2.234-.244-.588-.493-.508-.678-.517-.176-.009-.377-.009-.578-.009s-.527.075-.803.377c-.276.301-1.054 1.029-1.054 2.51s1.079 2.912 1.23 3.113c.151.201 2.122 3.238 5.14 4.542 1.637.708 2.378.85 3.167.925.803.076 2.502-.857 2.852-1.705.351-.848.351-1.576.251-1.727-.101-.151-.377-.251-.678-.402z"/></svg>
+                                    Congrats
+                                </a>
+                                ${showAlertBtn ? `<a href="${msg2Url}" target="_blank" class="px-2 py-1 bg-yellow-500 text-white rounded text-xs hover:opacity-90 transition flex items-center gap-1">Alert</a>` : ''}
+                            `;
+                        })() }
                     </td>
                 `;
                 tbody.appendChild(tr);
